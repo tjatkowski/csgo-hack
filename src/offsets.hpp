@@ -3,9 +3,9 @@
 
 //offsets values. Can change upon game's update
 namespace offset {
-	constexpr uintptr_t local_player = 0xDB75DC; //dwLocalPlayer
-	constexpr uintptr_t entity_list = 0x4DD347C; //dwEntityList
-	constexpr uintptr_t view_matrix = 0x4DC4D94; //dwViewMatrix
+	constexpr uintptr_t local_player = 0xDB75DC; //dwLocalPlayer 
+	constexpr uintptr_t entity_list = 0x4DD344C; //dwEntityList
+	constexpr uintptr_t view_matrix = 0x4DC4D64; //dwViewMatrix
 	namespace player {
 		constexpr uintptr_t isDormant = 0xED; //m_bDormant
 		constexpr uintptr_t health = 0x100; //m_iHealth 

@@ -86,6 +86,9 @@ DWORD WINAPI MainThread(HMODULE hModule)
     std::cout << "Hack injected!\n";
 
     std::cout << windowWidth << " : " << windowHeight << '\n';
+    std::cout << "Source: " << std::hex << (uintptr_t)d3d9Device[42] << '\n';
+    std::cout << "Destin: " << std::hex << (uintptr_t)hkEndScene << '\n';
+    std::cout << "Gatewa: " << std::hex << (uintptr_t)oEndScene << '\n';
 
     while (true)
     {
