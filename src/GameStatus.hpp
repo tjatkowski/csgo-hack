@@ -11,12 +11,15 @@
 
 class Entity {
 public:
+	Vec3 get_head_position();
 	union {
 		DEFINE_MEMBER_N(bool, isDormant, offset::player::isDormant);
 		DEFINE_MEMBER_N(int, health, offset::player::health);
 		DEFINE_MEMBER_N(Vec3, vec_origin, offset::player::vec_origin);
 		DEFINE_MEMBER_N(int, team, offset::player::team);
 		DEFINE_MEMBER_N(int, crosshair_id, offset::player::crosshair_id);
+		DEFINE_MEMBER_N(Vec3, view_offset, offset::player::view_offset);
+		DEFINE_MEMBER_N(uintptr_t, bone_matrix, offset::player::bone_matrix);
 	};
 };
 
@@ -40,8 +43,11 @@ public:
 	bool check_if_entity_valid(Entity* entity);
 
 	bool world_to_screen(Vec3 pos, Vec2& screen);
+
+	void aimAt(Vec3 target);
 //private:
 	uintptr_t module_base;
+	uintptr_t engine_base;
 	Entity* local_entity;
 	EntityList* entity_list;
 	float view_matrix[16];

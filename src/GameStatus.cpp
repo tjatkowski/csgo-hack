@@ -4,9 +4,20 @@
 
 #include "dummyDevice.hpp"
 
+#define PI 3.141
+
+Vec3 Entity::get_head_position() {
+	Vec3 head_position;
+	head_position.x = *(float*)(bone_matrix + 0x30 * 8 + 0x0C);
+	head_position.y = *(float*)(bone_matrix + 0x30 * 8 + 0x1C);
+	head_position.z = *(float*)(bone_matrix + 0x30 * 8 + 0x2C);
+	return head_position;
+}
+
 GameStatus::GameStatus()
 {
 	module_base = (DWORD)GetModuleHandle("client.dll");
+	engine_base = (DWORD)GetModuleHandle("engine.dll");
 
 	entity_list = (EntityList*)(module_base + offset::entity_list);
 	local_entity = entity_list->entities[0].entity;
@@ -48,4 +59,31 @@ bool GameStatus::world_to_screen(Vec3 pos, Vec2& screen) {
 	screen.x = (windowWidth / 2 * NDC.x) + (NDC.x + windowWidth / 2);
 	screen.y = -(windowHeight / 2 * NDC.y) + (NDC.y + windowHeight / 2);
 	return true;
+}
+
+void GameStatus::aimAt(Vec3 target) {
+	Vec3* viewAngles = (Vec3*)(*(uint32_t*)(engine_base + offset::client_state) + offset::client_state_view_angles);
+
+	Vec3 origin = local_entity->vec_origin;
+	Vec3 view_offset = local_entity->view_offset;
+	Vec3 my_pos;
+	my_pos.x = origin.x + view_offset.x;
+	my_pos.y = origin.y + view_offset.y;
+	my_pos.z = origin.z + view_offset.z;
+
+	Vec3 delta;
+	delta.x = target.x - my_pos.x;
+	delta.y = target.y - my_pos.y; 
+	delta.z = target.z - my_pos.z;
+
+	float delta_length = sqrt(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
+
+	float pitch = -asin(delta.z / delta_length) * (180 / PI);
+	float yaw = atan2(delta.y, delta.x) * (180 / PI);
+
+	if (pitch >= -89 && pitch <= 89 && yaw >= -180 && yaw <= 180) {
+		viewAngles->x = pitch;
+		viewAngles->y = yaw;
+	}
+	
 }

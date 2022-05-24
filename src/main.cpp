@@ -106,11 +106,26 @@ DWORD WINAPI MainThread(HMODULE hModule)
 
         if (crosshair_id > 0 && crosshair_id < 32 && local_team != crosshair_team)
         {
-            if (GetAsyncKeyState(VK_MENU)) //Activate triggerbot while holding ALT key on the keyboard
+            if (GetAsyncKeyState(VK_MENU) || GetAsyncKeyState(0x58)) //Activate triggerbot while holding ALT key on the keyboard
             {
                 mouse_event(MOUSEEVENTF_LEFTDOWN, NULL, NULL, 0, 0);
                 mouse_event(MOUSEEVENTF_LEFTUP, NULL, NULL, 0, 0);
                 Sleep(100);
+            }
+        }
+        if (GetAsyncKeyState(0x58)) {
+
+            for (int i = 1; i < 32; ++i) {
+                Entity* entity = game_status->entity_list->entities[i].entity;
+                if (!game_status->check_if_entity_valid(entity))
+                    continue;
+                if (entity->team == game_status->local_entity->team)
+                    continue;
+                Vec3 pos = entity->get_head_position();
+                std::cout << pos.x << " " << pos.y << " " << pos.z << '\n';
+                game_status->aimAt(pos);
+                Sleep(10);
+                break;
             }
         }
 
