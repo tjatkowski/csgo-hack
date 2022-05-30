@@ -45,6 +45,8 @@ public:
 	bool world_to_screen(Vec3 pos, Vec2& screen);
 
 	void aimAt(Vec3 target);
+
+	float getAimOffset(Vec3 target);
 //private:
 	uintptr_t module_base;
 	uintptr_t engine_base;

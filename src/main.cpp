@@ -115,17 +115,26 @@ DWORD WINAPI MainThread(HMODULE hModule)
         }
         if (GetAsyncKeyState(0x58)) {
 
+            float smallest_offset = 1000000;
+            Entity* smallest_entity = nullptr;
             for (int i = 1; i < 32; ++i) {
                 Entity* entity = game_status->entity_list->entities[i].entity;
                 if (!game_status->check_if_entity_valid(entity))
                     continue;
                 if (entity->team == game_status->local_entity->team)
                     continue;
+
                 Vec3 pos = entity->get_head_position();
-                std::cout << pos.x << " " << pos.y << " " << pos.z << '\n';
-                game_status->aimAt(pos);
-                Sleep(10);
-                break;
+                //std::cout << pos.x << " " << pos.y << " " << pos.z << '\n';
+                //game_status->aimAt(pos);
+                float new_offset = game_status->getAimOffset(pos);
+                if (smallest_entity == nullptr || new_offset < smallest_offset) {
+                    smallest_entity = entity;
+                    smallest_offset = new_offset;
+                }
+            }
+            if (smallest_entity) {
+                game_status->aimAt(smallest_entity->get_head_position());
             }
         }
 

@@ -61,6 +61,34 @@ bool GameStatus::world_to_screen(Vec3 pos, Vec2& screen) {
 	return true;
 }
 
+float GameStatus::getAimOffset(Vec3 target) {
+	Vec3* viewAngles = (Vec3*)(*(uint32_t*)(engine_base + offset::client_state) + offset::client_state_view_angles);
+
+	Vec3 origin = local_entity->vec_origin;
+	Vec3 view_offset = local_entity->view_offset;
+	Vec3 my_pos;
+	my_pos.x = origin.x + view_offset.x;
+	my_pos.y = origin.y + view_offset.y;
+	my_pos.z = origin.z + view_offset.z;
+
+	Vec3 delta;
+	delta.x = target.x - my_pos.x;
+	delta.y = target.y - my_pos.y;
+	delta.z = target.z - my_pos.z;
+
+	float delta_length = sqrt(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
+
+	float pitch = -asin(delta.z / delta_length) * (180 / PI);
+	float yaw = atan2(delta.y, delta.x) * (180 / PI);
+
+	if (pitch >= -89 && pitch <= 89 && yaw >= -180 && yaw <= 180) {
+		float pitch_offset = pitch - viewAngles->x;
+		float yaw_offset = yaw - viewAngles->y;
+		return pitch_offset * pitch_offset + yaw_offset * yaw_offset;
+	}
+	return 10000;
+}
+
 void GameStatus::aimAt(Vec3 target) {
 	Vec3* viewAngles = (Vec3*)(*(uint32_t*)(engine_base + offset::client_state) + offset::client_state_view_angles);
 
